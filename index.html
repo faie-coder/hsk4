@@ -451,6 +451,7 @@ body{display:flex;min-height:100vh;background:var(--bg);font-family:'Sarabun',sa
     </div>
     <div class="game-stats">
       <span>คู่ที่จับได้: <strong id="matchedCount">0</strong>/<strong id="totalPairs">15</strong></span>
+      <button id="gamePinyinToggle" class="tab" style="padding:4px 12px;font-size:12px;display:none" onclick="toggleGamePinyinUnified()">ซ่อน Pinyin</button>
       <span>เวลา: <strong id="gameTime">0:00</strong></span>
     </div>
     <div class="game-grid" id="gameGrid"></div>
@@ -1954,7 +1955,12 @@ function parseExample(ex){
 
 function render(){
   filtered=getFiltered();
-  document.getElementById("dispCount").textContent=filtered.length+" คำ";
+  const dispCountEl=document.getElementById("dispCount");
+  if(showDifficult){
+    dispCountEl.innerHTML=`${filtered.length} คำ <button class="tab" style="margin-left:8px;padding:4px 12px;font-size:12px" onclick="clearAllDifficult()">Clear All</button>`;
+  }else{
+    dispCountEl.textContent=filtered.length+" คำ";
+  }
   const totalP=Math.ceil(filtered.length/PAGE);
   if(page>totalP)page=1;
   const slice=filtered.slice((page-1)*PAGE,page*PAGE);
@@ -2148,6 +2154,15 @@ function removeDifficult(n){
   }
 }
 
+function clearAllDifficult(){
+  if(confirm('ลบคำที่จำยากทั้งหมดหรือไม่?')){
+    difficultWords={};
+    localStorage.setItem('hsk4_difficult',JSON.stringify(difficultWords));
+    updateDifficultCount();
+    render();
+  }
+}
+
 // เกมจับคู่
 let gameWords=[];
 let gameCards=[];
@@ -2155,6 +2170,7 @@ let selectedCards=[];
 let matchedPairs=0;
 let gameStartTime=0;
 let gameTimer=null;
+let gameShowPinyin=true;
 
 function startMatchingGame(){
   // สุ่มคำศัพท์ 15 คำ (จะได้ 30 การ์ด)
@@ -2190,6 +2206,13 @@ function startMatchingGame(){
   document.getElementById('gameOverModal').style.display='none';
   document.getElementById('gameResultModal').style.display='none';
   
+  // แสดงปุ่ม toggle Pinyin (เกมนี้เป็นโหมดจีน-ไทยเท่านั้น)
+  const pinyinToggle=document.getElementById('gamePinyinToggle');
+  if(pinyinToggle){
+    pinyinToggle.style.display='inline-block';
+    pinyinToggle.textContent=gameShowPinyin?'ซ่อน Pinyin':'แสดง Pinyin';
+  }
+  
   // render การ์ด
   renderGameCards();
   
@@ -2202,11 +2225,34 @@ function renderGameCards(){
   const grid=document.getElementById('gameGrid');
   grid.innerHTML=gameCards.map((card,idx)=>`
     <div class="game-card" data-idx="${idx}" onclick="selectGameCard(${idx})">
-      ${card.type==='zh'?`<div style="font-size:20px;font-weight:600;margin-bottom:4px">${card.text}</div><div style="font-size:12px;color:#6B7280">${card.pinyin}</div>`:`<div>${card.text}</div>`}
+      ${card.type==='zh'?(gameShowPinyin?`<div style="font-size:20px;font-weight:600;margin-bottom:4px">${card.text}</div><div style="font-size:12px;color:#6B7280">${card.pinyin}</div>`:`<div style="font-size:20px;font-weight:600">${card.text}</div>`):`<div>${card.text}</div>`}
     </div>
   `).join('');
   
   document.getElementById('matchedCount').textContent=matchedPairs;
+}
+
+function toggleGamePinyinUnified(){
+  // Check if this is enhanced game (has gameMode variable set to specific mode)
+  if(typeof gameMode!=='undefined'&&(gameMode==='chinese-thai'||gameMode==='chinese-pinyin')){
+    // Enhanced game
+    gameShowPinyinEnhanced=!gameShowPinyinEnhanced;
+    const pinyinToggle=document.getElementById('gamePinyinToggle');
+    if(pinyinToggle)pinyinToggle.textContent=gameShowPinyinEnhanced?'ซ่อน Pinyin':'แสดง Pinyin';
+    // Re-render cards
+    const grid=document.getElementById('gameGrid');
+    grid.innerHTML=gameCards.map((card,idx)=>`
+      <div class="game-card" data-idx="${idx}" onclick="selectGameCard(${idx})">
+        ${card.type==='zh'?(gameMode==='chinese-thai'?(gameShowPinyinEnhanced?`<div style="font-size:20px;font-weight:600;margin-bottom:4px">${card.text}</div><div style="font-size:12px;color:#6B7280">${card.pinyin}</div>`:`<div style="font-size:20px;font-weight:600">${card.text}</div>`):`<div style="font-size:20px;font-weight:600">${card.text}</div>`):`<div>${card.text}</div>`}
+      </div>
+    `).join('');
+  }else{
+    // Simple game (always Chinese-Thai mode)
+    gameShowPinyin=!gameShowPinyin;
+    const pinyinToggle=document.getElementById('gamePinyinToggle');
+    if(pinyinToggle)pinyinToggle.textContent=gameShowPinyin?'ซ่อน Pinyin':'แสดง Pinyin';
+    renderGameCards();
+  }
 }
 
 function selectGameCard(idx){
@@ -2291,6 +2337,9 @@ function closeGame(){
   document.getElementById('gameOverModal').style.display='none';
   document.getElementById('gameResultModal').style.display='none';
   if(gameTimer)clearInterval(gameTimer);
+  // ซ่อนปุ่ม toggle Pinyin
+  const pinyinToggle=document.getElementById('gamePinyinToggle');
+  if(pinyinToggle)pinyinToggle.style.display='none';
 }
 
 function toggleSidebar(){
@@ -4111,6 +4160,7 @@ function closeRandomQuiz(){
 // ===== Enhanced Memory Card Game =====
 let gameMode='chinese-thai';
 let gamePairCount=15;
+let gameShowPinyinEnhanced=true;
 
 function startMatchingGame(mode='chinese-thai',pairCount=15){
   gameMode=mode||'chinese-thai';
@@ -4148,7 +4198,7 @@ function startMatchingGame(mode='chinese-thai',pairCount=15){
   const grid=document.getElementById('gameGrid');
   grid.innerHTML=gameCards.map((card,idx)=>`
     <div class="game-card" data-idx="${idx}" onclick="selectGameCard(${idx})">
-      ${card.type==='zh'?`<div style="font-size:20px;font-weight:600;margin-bottom:4px">${card.text}</div><div style="font-size:12px;color:#6B7280">${card.pinyin}</div>`:`<div>${card.text}</div>`}
+      ${card.type==='zh'?(gameMode==='chinese-thai'?(gameShowPinyinEnhanced?`<div style="font-size:20px;font-weight:600;margin-bottom:4px">${card.text}</div><div style="font-size:12px;color:#6B7280">${card.pinyin}</div>`:`<div style="font-size:20px;font-weight:600">${card.text}</div>`):`<div style="font-size:20px;font-weight:600">${card.text}</div>`):`<div>${card.text}</div>`}
     </div>
   `).join('');
   
@@ -4156,6 +4206,17 @@ function startMatchingGame(mode='chinese-thai',pairCount=15){
   document.getElementById('totalPairs').textContent=gamePairCount;
   document.getElementById('gameTime').textContent='0:00';
   document.getElementById('gameModal').classList.add('show');
+  
+  // แสดง/ซ่อนปุ่ม toggle Pinyin ตามโหมด
+  const pinyinToggle=document.getElementById('gamePinyinToggle');
+  if(pinyinToggle){
+    if(gameMode==='chinese-thai'){
+      pinyinToggle.style.display='inline-block';
+      pinyinToggle.textContent=gameShowPinyinEnhanced?'ซ่อน Pinyin':'แสดง Pinyin';
+    }else{
+      pinyinToggle.style.display='none';
+    }
+  }
   
   const gameOverModal=document.getElementById('gameOverModal');
   if(gameOverModal)gameOverModal.style.display='none';
