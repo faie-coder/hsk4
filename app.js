@@ -3,12 +3,9 @@ let difficultWords=JSON.parse(localStorage.getItem('hsk4_difficult')||'{}');
 let showDifficult=false;
 let currentRange=null; // '1-300', '301-600', '601-900', '901-1200'
 
+// Resolve topic for a vocabulary word
 function resolveTopic(v){
   return topicMap[v.n]||null;
-}
-
-function getGroupLabel(g){
-  return catName[g]||'ทั้งหมด';
 }
 
 function updateFilterCounts(){
@@ -546,26 +543,6 @@ function startPractice(el){
   render();
 }
 
-function startRangePractice(start,end){
-  practiceMode=true;
-  showDifficult=false;
-  page=1;
-  
-  // กรองคำศัพท์ในช่วงที่กำหนด
-  const rangeVocab=vocab.filter(v=>v.n>=start&&v.n<=end);
-  
-  // สุ่ม 50 คำจากช่วงนี้
-  const shuffled=[...rangeVocab].sort(()=>Math.random()-0.5);
-  practiceWords=shuffled.slice(0,Math.min(50,shuffled.length));
-  
-  // อัพเดท UI
-  document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
-  document.querySelectorAll(".menu-item").forEach(m=>m.classList.remove("active"));
-  event.currentTarget.classList.add("active");
-  
-  render();
-}
-
 function getDifficultWordNumbers(){
   // คำที่จำยาก: flips >= 3 หรือ views >= 2 (กลับมาดูซ้ำ)
   return Object.keys(difficultWords)
@@ -634,55 +611,6 @@ let matchedPairs=0;
 let gameStartTime=0;
 let gameTimer=null;
 let gameShowPinyin=true;
-
-function startMatchingGame(){
-  // สุ่มคำศัพท์ 15 คำ (จะได้ 30 การ์ด)
-  const shuffled=[...vocab].sort(()=>Math.random()-0.5);
-  gameWords=shuffled.slice(0,15);
-  
-  // สร้างการ์ด: ภาษาจีน + ความหมายไทย
-  const zhCards=[];
-  const thCards=[];
-  gameWords.forEach((w,i)=>{
-    zhCards.push({id:i,type:'zh',text:w.h,pinyin:w.p,pair:i});
-    thCards.push({id:i+15,type:'th',text:w.m,pair:i});
-  });
-  
-  // สุ่มตำแหน่งการ์ดแยกกัน
-  zhCards.sort(()=>Math.random()-0.5);
-  thCards.sort(()=>Math.random()-0.5);
-  
-  // จัดเรียง: คอลัมน์ซ้าย = จีน, คอลัมน์ขวา = ไทย
-  gameCards=[];
-  for(let i=0;i<zhCards.length;i++){
-    gameCards.push(zhCards[i]);
-    gameCards.push(thCards[i]);
-  }
-  
-  // รีเซ็ตเกม
-  selectedCards=[];
-  matchedPairs=0;
-  gameStartTime=Date.now();
-  
-  // แสดง modal และซ่อน game over modal และ result modal
-  document.getElementById('gameModal').classList.add('show');
-  document.getElementById('gameOverModal').style.display='none';
-  document.getElementById('gameResultModal').style.display='none';
-  
-  // แสดงปุ่ม toggle Pinyin (เกมนี้เป็นโหมดจีน-ไทยเท่านั้น)
-  const pinyinToggle=document.getElementById('gamePinyinToggle');
-  if(pinyinToggle){
-    pinyinToggle.style.display='inline-block';
-    pinyinToggle.textContent=gameShowPinyin?'ซ่อน Pinyin':'แสดง Pinyin';
-  }
-  
-  // render การ์ด
-  renderGameCards();
-  
-  // เริ่มจับเวลา
-  if(gameTimer)clearInterval(gameTimer);
-  gameTimer=setInterval(updateGameTime,1000);
-}
 
 function renderGameCards(){
   const grid=document.getElementById('gameGrid');
@@ -803,6 +731,7 @@ function closeGame(){
   // ซ่อนปุ่ม toggle Pinyin
   const pinyinToggle=document.getElementById('gamePinyinToggle');
   if(pinyinToggle)pinyinToggle.style.display='none';
+  showHamburgerMenu();
 }
 
 // === Character Breakdown Functions ===
@@ -928,6 +857,14 @@ function filterCharBreakdown(q){
   applyCharFilters(q);
 }
 
+
+// Show hamburger menu (used after closing modals)
+function showHamburgerMenu(){
+  const menuBtn=document.querySelector('.mobile-menu-btn');
+  if(menuBtn){
+    menuBtn.classList.remove('hide');
+  }
+}
 
 function toggleSidebar(){
   const sidebar=document.getElementById('sidebar');
@@ -1159,11 +1096,7 @@ function closeWritingModal(){
   if(writingWriter){
     writingWriter=null;
   }
-  // Show hamburger menu again
-  const menuBtn=document.querySelector('.mobile-menu-btn');
-  if(menuBtn){
-    menuBtn.classList.remove('hide');
-  }
+  showHamburgerMenu();
 }
 
 // แบบฝึกหัดอ่านตอบคำถาม
@@ -1267,6 +1200,7 @@ function showReadingSummary(){
 
 function closeReadingModal(){
   document.getElementById('readingModal').classList.remove('show');
+  showHamburgerMenu();
 }
 
 // แบบฝึกหัดเรียงประโยค
@@ -1405,6 +1339,7 @@ function showOrderingSummary(){
 
 function closeOrderingModal(){
   document.getElementById('orderingModal').classList.remove('show');
+  showHamburgerMenu();
 }
 
 function showSimilarWords(){
@@ -1497,6 +1432,7 @@ function closeSimilarModal(){
   document.getElementById('similarModal').classList.remove('show');
   document.getElementById('similarListView').classList.remove('hidden');
   document.getElementById('similarDetailView').classList.remove('active');
+  showHamburgerMenu();
 }
 
 let currentArticle=null;
@@ -1566,6 +1502,7 @@ function showArticleList(){
 function closeArticle(){
   document.getElementById('articleModal').classList.remove('show');
   currentArticle=null;
+  showHamburgerMenu();
 }
 
 // เพิ่ม event listener สำหรับปิด modal เมื่อกดที่ overlay
@@ -1695,6 +1632,7 @@ function closeStrokeModal(){
   document.getElementById('strokeModal').classList.remove('show');
   strokeWriters=[];
   currentStrokeWord='';
+  showHamburgerMenu();
 }
 
 // ===== Listening Dictation =====
