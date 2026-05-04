@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HSK4 Flashcards - 1200 คำศัพท์</title>
+<script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.3.0/dist/hanzi-writer.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Sarabun:wght@300;400;600;700&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- Top Navigation -->
+<div class="topbar">
+  <div class="topbar-left">
+    <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+    <div class="logo">
+      <div class="logo-icon">🇨🇳</div>
+      <span>HSK4 Flashcards</span>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <div class="user-avatar">U</div>
+  </div>
+</div>
+
+<!-- Mobile Sidebar Overlay -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-section">
+    <div class="menu-title">Flashcards</div>
+    <div class="sidebar-menu">
+      <div class="menu-item" onclick="showAllFlashcards()">
+        <span class="menu-icon">🎴</span>
+        <span>ทั้งหมด 1200 คำ</span>
+      </div>
+      <div class="menu-item submenu-toggle" onclick="toggleSubmenu('submenuFlashcards')">
+        <span class="menu-icon">📚</span>
+        <span>คำศัพท์แบ่งชุด ▾</span>
+      </div>
+      <div class="submenu" id="submenuFlashcards">
+        <div class="menu-item submenu-item" onclick="showRangeFlashcards(1,300)">
+          <span class="menu-icon">📘</span>
+          <span>คำที่ 1-300</span>
+        </div>
+        <div class="menu-item submenu-item" onclick="showRangeFlashcards(301,600)">
+          <span class="menu-icon">📗</span>
+          <span>คำที่ 301-600</span>
+        </div>
+        <div class="menu-item submenu-item" onclick="showRangeFlashcards(601,900)">
+          <span class="menu-icon">📙</span>
+          <span>คำที่ 601-900</span>
+        </div>
+        <div class="menu-item submenu-item" onclick="showRangeFlashcards(901,1200)">
+          <span class="menu-icon">📕</span>
+          <span>คำที่ 901-1200</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="sidebar-section">
+    <div class="menu-title">เครื่องมือ</div>
+    <div class="menu-item" onclick="togglePinyin()">
+      <span class="menu-icon">🔤</span>
+      <span id="pinyinToggleText">ซ่อน Pinyin</span>
+    </div>
+    <div class="menu-item" onclick="showDifficultWords(null)">
+      <span class="menu-icon">❌</span>
+      <span>คำที่จำยาก (<span id="difficultCount">0</span>)</span>
+    </div>
+  </div>
+  
+  <div class="sidebar-section">
+    <div class="menu-title">แบบฝึกหัด</div>
+    <div class="sidebar-menu">
+      <div class="menu-item" onclick="startPractice(null)">
+        <span class="menu-icon">🎯</span>
+        <span>สุ่มท่องศัพท์ 50 คำจากทั้งหมด</span>
+      </div>
+      <div class="menu-item submenu-toggle" onclick="toggleSubmenu('submenuGame')">
+        <span class="menu-icon">🎮</span>
+        <span>เกมจับคู่ ▾</span>
+      </div>
+      <div class="submenu" id="submenuGame">
+        <div class="menu-item submenu-item" onclick="startMatchingGame('chinese-thai', 15)">
+          <span class="menu-icon">🎯</span>
+          <span>จีน-ไทย (15 คำ)</span>
+        </div>
+        <div class="menu-item submenu-item" onclick="startMatchingGame('chinese-thai', 30)">
+          <span class="menu-icon">🎯</span>
+          <span>จีน-ไทย (30 คำ)</span>
+        </div>
+        <div class="menu-item submenu-item" onclick="startMatchingGame('chinese-thai', 50)">
+          <span class="menu-icon">🎯</span>
+          <span>จีน-ไทย (50 คำ)</span>
+        </div>
+        <div class="menu-item submenu-item" onclick="startMatchingGame('chinese-pinyin', 15)">
+          <span class="menu-icon">🔤</span>
+          <span>จีน-Pinyin (15 คำ)</span>
+        </div>
+        <div class="menu-item submenu-item" onclick="startMatchingGame('chinese-pinyin', 30)">
+          <span class="menu-icon">🔤</span>
+          <span>จีน-Pinyin (30 คำ)</span>
+        </div>
+        <div class="menu-item submenu-item" onclick="startMatchingGame('chinese-pinyin', 50)">
+          <span class="menu-icon">🔤</span>
+          <span>จีน-Pinyin (50 คำ)</span>
+        </div>
+      </div>
+      <div class="menu-item submenu-toggle" onclick="toggleSubmenu('submenuWriting')">
+        <span class="menu-icon">✍️</span>
+        <span>แบบฝึกหัดเขียนตามหมวดหมู่ ▾</span>
+      </div>
+      <div class="submenu" id="submenuWriting">
+        <div class="menu-item submenu-item" onclick="startWritingPracticeByTopic('family')">
+          <span class="menu-icon">👨‍👩‍👧</span>
+          <span>ครอบครัว & คน</span>
+        </div>
+        <div class="menu-item submenu-item" onclick="startWritingPracticeByTopic('body')">
+          <span class="menu-icon">🏃</span>
+          <span>ร่างกาย & สุขภาพ</span>
+        </div>
+        <div class="menu-item submenu-item" onclick="startWritingPracticeByTopic('food')">
+          <span class="menu-icon">🍜</span>
+          <span>อาหาร & เครื่องดื่ม</span>
+        </div>
+        <div class="menu-item submenu-item" onclick="startWritingPracticeByTopic('place')">
+          <span class="menu-icon">🏠</span>
+          <span>สถานที่</span>
+        </div>
+        <div class="menu-item submenu-item" onclick="startWritingPracticeByTopic('study')">
+          <span class="menu-icon">📚</span>
+          <span>การเรียน & ภาษา</span>
+        </div>
+        <div class="menu-item submenu-item" onclick="startWritingPracticeByTopic('action')">
+          <span class="menu-icon">🏃</span>
+          <span>กริยาทั่วไป</span>
+        </div>
+        <div class="menu-item submenu-item" onclick="startWritingPracticeByTopic('emotion')">
+          <span class="menu-icon">😊</span>
+          <span>อารมณ์ & ความรู้สึก</span>
+        </div>
+        <div class="menu-item submenu-item" onclick="startWritingPracticeByTopic('nature')">
+          <span class="menu-icon">🌳</span>
+          <span>ธรรมชาติ & สัตว์</span>
+        </div>
+        <div class="menu-item submenu-item" onclick="startWritingPracticeByTopic('sport')">
+          <span class="menu-icon">⚽</span>
+          <span>กีฬา & ความบันเทิง</span>
+        </div>
+        <div class="menu-item submenu-item" onclick="startWritingPracticeByTopic('money')">
+          <span class="menu-icon">💰</span>
+          <span>เงิน & การซื้อขาย</span>
+        </div>
+        <div class="menu-item submenu-item" onclick="startWritingPracticeByTopic('transport')">
+          <span class="menu-icon">🚗</span>
+          <span>การเดินทาง</span>
+        </div>
+        <div class="menu-item submenu-item" onclick="startWritingPracticeByTopic('social')">
+          <span class="menu-icon">👥</span>
+          <span>สังคม & วัฒนธรรม</span>
+        </div>
+        <div class="menu-item submenu-item" onclick="startWritingPracticeByTopic('tech')">
+          <span class="menu-icon">💻</span>
+          <span>เทคโนโลยี & สื่อ</span>
+        </div>
+        <div class="menu-item submenu-item" onclick="startWritingPracticeByTopic('time')">
+          <span class="menu-icon">🕐</span>
+          <span>เวลา & ฤดูกาล</span>
+        </div>
+      </div>
+      <div class="menu-item submenu-toggle" onclick="toggleSubmenu('submenu1')">
+        <span class="menu-icon">📘</span>
+        <span>คำที่ 1-300 ▾</span>
+      </div>
+      <div class="submenu" id="submenu1">
+        <div class="menu-item submenu-item" onclick="startWritingPractice(1,300)">
+          <span class="menu-icon">✍️</span>
+          <span>แบบฝึกหัดเขียน</span>
+        </div>
+        <div class="menu-item submenu-item" onclick="startReadingQuiz(1,300)">
+          <span class="menu-icon">📖</span>
+          <span>อ่าน แล้วตอบคำถาม</span>
+        </div>
+        <div class="menu-item submenu-item" onclick="startSentenceOrdering(1,300)">
+          <span class="menu-icon">🔤</span>
+          <span>เรียงประโยค</span>
+        </div>
+      </div>
+      <div class="menu-item submenu-toggle" onclick="toggleSubmenu('submenu2')">
+        <span class="menu-icon">📗</span>
+        <span>คำที่ 301-600 ▾</span>
+      </div>
+      <div class="submenu" id="submenu2">
+        <div class="menu-item submenu-item" onclick="startWritingPractice(301,600)">
+          <span class="menu-icon">✍️</span>
+          <span>แบบฝึกหัดเขียน</span>
+        </div>
+        <div class="menu-item submenu-item" onclick="startReadingQuiz(301,600)">
+          <span class="menu-icon">📖</span>
+          <span>อ่าน แล้วตอบคำถาม</span>
+        </div>
+        <div class="menu-item submenu-item" onclick="startSentenceOrdering(301,600)">
+          <span class="menu-icon">🔤</span>
+          <span>เรียงประโยค</span>
+        </div>
+      </div>
+      <div class="menu-item submenu-toggle" onclick="toggleSubmenu('submenu3')">
+        <span class="menu-icon">📙</span>
+        <span>คำที่ 601-900 ▾</span>
+      </div>
+      <div class="submenu" id="submenu3">
+        <div class="menu-item submenu-item" onclick="startWritingPractice(601,900)">
+          <span class="menu-icon">✍️</span>
+          <span>แบบฝึกหัดเขียน</span>
+        </div>
+        <div class="menu-item submenu-item" onclick="startReadingQuiz(601,900)">
+          <span class="menu-icon">📖</span>
+          <span>อ่าน แล้วตอบคำถาม</span>
+        </div>
+        <div class="menu-item submenu-item" onclick="startSentenceOrdering(601,900)">
+          <span class="menu-icon">🔤</span>
+          <span>เรียงประโยค</span>
+        </div>
+      </div>
+      <div class="menu-item submenu-toggle" onclick="toggleSubmenu('submenu4')">
+        <span class="menu-icon">📕</span>
+        <span>คำที่ 901-1200 ▾</span>
+      </div>
+      <div class="submenu" id="submenu4">
+        <div class="menu-item submenu-item" onclick="startWritingPractice(901,1200)">
+          <span class="menu-icon">✍️</span>
+          <span>แบบฝึกหัดเขียน</span>
+        </div>
+        <div class="menu-item submenu-item" onclick="startReadingQuiz(901,1200)">
+          <span class="menu-icon">📖</span>
+          <span>อ่าน แล้วตอบคำถาม</span>
+        </div>
+        <div class="menu-item submenu-item" onclick="startSentenceOrdering(901,1200)">
+          <span class="menu-icon">🔤</span>
+          <span>เรียงประโยค</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="sidebar-section">
+    <div class="menu-title">แบบทดสอบ</div>
+    <div class="menu-item" onclick="startListeningDictation()">
+      <span class="menu-icon">🎧</span>
+      <span>โหมดฟังและพิมพ์</span>
+    </div>
+    <div class="menu-item" onclick="startRandomQuiz()">
+      <span class="menu-icon">📝</span>
+      <span>แบบทดสอบแบบสุ่ม</span>
+    </div>
+  </div>
+  
+  <div class="sidebar-section">
+    <div class="menu-title">บทความ</div>
+    <div class="menu-item" onclick="showSampleArticles()">
+      <span class="menu-icon">📖</span>
+      <span>ตัวอย่างบทความ (120)</span>
+    </div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="menu-title">อื่นๆ</div>
+    <div class="menu-item" onclick="showSimilarWords()">
+      <span class="menu-icon">🔍</span>
+      <span>เปรียบเทียบคำคล้ายกัน</span>
+    </div>
+    <div class="menu-item" onclick="showCharBreakdown()">
+      <span class="menu-icon">🧩</span>
+      <span>แยกตัวอักษร โครงสร้างคำ</span>
+    </div>
+  </div>
+
+</div>
+<div class="main-content">
+<div class="wrap">
+<div class="filter-sidebar-overlay" id="filterSidebarOverlay" onclick="toggleFilterSidebar()"></div>
+<div class="filter-sidebar" id="filterSidebar">
+  <div class="filter-sidebar-head">
+    <div class="filter-sidebar-title">ตัวกรองคำศัพท์</div>
+    <button class="filter-sidebar-close" onclick="toggleFilterSidebar()" type="button" aria-label="ปิดตัวกรอง">✕</button>
+  </div>
+  <div class="filter-sidebar-actions">
+    <button class="filter-action-link" onclick="resetAllFilters()" type="button">Reset</button>
+  </div>
+  <div class="filter-section">
+    <div class="filter-section-title">หมวดหมู่</div>
+    <div class="filter-options">
+      <label class="filter-radio" data-filter="topic" data-value="all" data-count="0"><input type="radio" name="topic" value="all" checked onchange="setTopic('all',this)"/> ทั้งหมด</label>
+      <label class="filter-radio" data-filter="topic" data-value="action" data-count="0"><input type="radio" name="topic" value="action" onchange="setTopic('action',this)"/> กริยาทั่วไป</label>
+      <label class="filter-radio" data-filter="topic" data-value="body" data-count="0"><input type="radio" name="topic" value="body" onchange="setTopic('body',this)"/> ร่างกาย</label>
+      <label class="filter-radio" data-filter="topic" data-value="describe" data-count="0"><input type="radio" name="topic" value="describe" onchange="setTopic('describe',this)"/> คำคุณศัพท์</label>
+      <label class="filter-radio" data-filter="topic" data-value="emotion" data-count="0"><input type="radio" name="topic" value="emotion" onchange="setTopic('emotion',this)"/> อารมณ์</label>
+      <label class="filter-radio" data-filter="topic" data-value="family" data-count="0"><input type="radio" name="topic" value="family" onchange="setTopic('family',this)"/> ครอบครัว</label>
+      <label class="filter-radio" data-filter="topic" data-value="food" data-count="0"><input type="radio" name="topic" value="food" onchange="setTopic('food',this)"/> อาหาร</label>
+      <label class="filter-radio" data-filter="topic" data-value="misc" data-count="0"><input type="radio" name="topic" value="misc" onchange="setTopic('misc',this)"/> คำเชื่อม</label>
+      <label class="filter-radio" data-filter="topic" data-value="money" data-count="0"><input type="radio" name="topic" value="money" onchange="setTopic('money',this)"/> เงิน</label>
+      <label class="filter-radio" data-filter="topic" data-value="nature" data-count="0"><input type="radio" name="topic" value="nature" onchange="setTopic('nature',this)"/> ธรรมชาติ</label>
+      <label class="filter-radio" data-filter="topic" data-value="place" data-count="0"><input type="radio" name="topic" value="place" onchange="setTopic('place',this)"/> สถานที่</label>
+      <label class="filter-radio" data-filter="topic" data-value="social" data-count="0"><input type="radio" name="topic" value="social" onchange="setTopic('social',this)"/> สังคม</label>
+      <label class="filter-radio" data-filter="topic" data-value="sport" data-count="0"><input type="radio" name="topic" value="sport" onchange="setTopic('sport',this)"/> กีฬา</label>
+      <label class="filter-radio" data-filter="topic" data-value="study" data-count="0"><input type="radio" name="topic" value="study" onchange="setTopic('study',this)"/> การเรียน</label>
+      <label class="filter-radio" data-filter="topic" data-value="tech" data-count="0"><input type="radio" name="topic" value="tech" onchange="setTopic('tech',this)"/> เทคโนโลยี</label>
+      <label class="filter-radio" data-filter="topic" data-value="time" data-count="0"><input type="radio" name="topic" value="time" onchange="setTopic('time',this)"/> เวลา</label>
+      <label class="filter-radio" data-filter="topic" data-value="transport" data-count="0"><input type="radio" name="topic" value="transport" onchange="setTopic('transport',this)"/> การเดินทาง</label>
+      <label class="filter-radio" data-filter="topic" data-value="work" data-count="0"><input type="radio" name="topic" value="work" onchange="setTopic('work',this)"/> การทำงาน</label>
+    </div>
+  </div>
+</div>
+
+<div class="header-sticky">
+<h1 class="page-title">การ์ดคำศัพท์</h1>
+<div class="controls">
+  <span class="stats" id="dispCount"></span>
+  <button class="filter-btn" id="filterBtn" type="button" onclick="toggleFilterSidebar()">
+    <span>Filter</span>
+    <span id="filterBtnValue" style="font-size:11px;opacity:0.8">(ทั้งหมด)</span>
+  </button>
+  <button class="filter-btn" id="compoundBtn" type="button" onclick="toggleCompoundDropdown()">
+    <span>📝</span>
+    <span>คำประสม</span>
+    <span id="compoundBtnValue" style="font-size:11px;opacity:0.8"></span>
+  </button>
+  <button class="filter-btn" id="radicalBtn" type="button" onclick="toggleRadicalDropdown()">
+    <span>部</span>
+    <span>อักษรข้าง</span>
+    <span id="radicalBtnValue" style="font-size:11px;opacity:0.8"></span>
+  </button>
+</div>
+</div>
+<div class="compound-dropdown-overlay" id="compoundDropdownOverlay" onclick="toggleCompoundDropdown()"></div>
+<div class="compound-dropdown" id="compoundDropdown">
+  <div class="compound-dropdown-head">
+    <div class="compound-dropdown-title">คำประสม</div>
+    <button class="compound-dropdown-close" onclick="toggleCompoundDropdown()" type="button" aria-label="ปิดคำประสม">✕</button>
+  </div>
+  <div class="compound-dropdown-item" data-key="all" data-count="0" onclick="setCompound(null,this)">ทั้งหมด</div>
+  <div class="compound-dropdown-divider"></div>
+  <div class="compound-dropdown-item" data-key="好" data-count="0" onclick="setCompound('好',this)">คำที่มี 好</div>
+  <div class="compound-dropdown-item" data-key="不" data-count="0" onclick="setCompound('不',this)">คำที่มี 不</div>
+  <div class="compound-dropdown-item" data-key="大" data-count="0" onclick="setCompound('大',this)">คำที่มี 大</div>
+  <div class="compound-dropdown-item" data-key="出" data-count="0" onclick="setCompound('出',this)">คำที่มี 出</div>
+  <div class="compound-dropdown-item" data-key="上" data-count="0" onclick="setCompound('上',this)">คำที่มี 上</div>
+  <div class="compound-dropdown-item" data-key="下" data-count="0" onclick="setCompound('下',this)">คำที่มี 下</div>
+  <div class="compound-dropdown-item" data-key="打" data-count="0" onclick="setCompound('打',this)">คำที่มี 打</div>
+  <div class="compound-dropdown-item" data-key="发" data-count="0" onclick="setCompound('发',this)">คำที่มี 发</div>
+  <div class="compound-dropdown-item" data-key="人" data-count="0" onclick="setCompound('人',this)">คำที่มี 人</div>
+  <div class="compound-dropdown-item" data-key="心" data-count="0" onclick="setCompound('心',this)">คำที่มี 心</div>
+  <div class="compound-dropdown-item" data-key="学" data-count="0" onclick="setCompound('学',this)">คำที่มี 学</div>
+  <div class="compound-dropdown-item" data-key="工" data-count="0" onclick="setCompound('工',this)">คำที่มี 工</div>
+  <div class="compound-dropdown-item" data-key="以" data-count="0" onclick="setCompound('以',this)">คำที่มี 以</div>
+  <div class="compound-dropdown-item" data-key="时" data-count="0" onclick="setCompound('时',this)">คำที่มี 时</div>
+  <div class="compound-dropdown-item" data-key="来" data-count="0" onclick="setCompound('来',this)">คำที่มี 来</div>
+  <div class="compound-dropdown-item" data-key="成" data-count="0" onclick="setCompound('成',this)">คำที่มี 成</div>
+  <div class="compound-dropdown-item" data-key="关" data-count="0" onclick="setCompound('关',this)">คำที่มี 关</div>
+  <div class="compound-dropdown-item" data-key="经" data-count="0" onclick="setCompound('经',this)">คำที่มี 经</div>
+  <div class="compound-dropdown-item" data-key="感" data-count="0" onclick="setCompound('感',this)">คำที่มี 感</div>
+  <div class="compound-dropdown-item" data-key="自" data-count="0" onclick="setCompound('自',this)">คำที่มี 自</div>
+  <div class="compound-dropdown-item" data-key="高" data-count="0" onclick="setCompound('高',this)">คำที่มี 高</div>
+  <div class="compound-dropdown-item" data-key="一" data-count="0" onclick="setCompound('一',this)">คำที่มี 一</div>
+  <div class="compound-dropdown-item" data-key="方" data-count="0" onclick="setCompound('方',this)">คำที่มี 方</div>
+  <div class="compound-dropdown-item" data-key="家" data-count="0" onclick="setCompound('家',this)">คำที่มี 家</div>
+</div>
+
+<div class="compound-dropdown-overlay" id="radicalDropdownOverlay" onclick="toggleRadicalDropdown()"></div>
+<div class="compound-dropdown" id="radicalDropdown">
+  <div class="compound-dropdown-head">
+    <div class="compound-dropdown-title">อักษรข้าง (Radicals)</div>
+    <button class="compound-dropdown-close" onclick="toggleRadicalDropdown()" type="button" aria-label="ปิดอักษรข้าง">✕</button>
+  </div>
+  <div class="compound-dropdown-item" data-key="all" data-count="0" onclick="setRadical(null,this)">ทั้งหมด</div>
+  <div class="compound-dropdown-divider"></div>
+  <div class="compound-dropdown-item" data-key="氵" data-count="0" onclick="setRadical('氵',this)">氵 น้ำ (水)</div>
+  <div class="compound-dropdown-item" data-key="扌" data-count="0" onclick="setRadical('扌',this)">扌 มือ (手)</div>
+  <div class="compound-dropdown-item" data-key="口" data-count="0" onclick="setRadical('口',this)">口 ปาก</div>
+  <div class="compound-dropdown-item" data-key="亻" data-count="0" onclick="setRadical('亻',this)">亻 คน (人)</div>
+  <div class="compound-dropdown-item" data-key="心" data-count="0" onclick="setRadical('心',this)">心/忄 ใจ (心)</div>
+  <div class="compound-dropdown-item" data-key="讠" data-count="0" onclick="setRadical('讠',this)">讠 คำพูด (言)</div>
+  <div class="compound-dropdown-item" data-key="纟" data-count="0" onclick="setRadical('纟',this)">纟 ไหม (糸)</div>
+  <div class="compound-dropdown-item" data-key="艹" data-count="0" onclick="setRadical('艹',this)">艹 หญ้า (草)</div>
+  <div class="compound-dropdown-item" data-key="钅" data-count="0" onclick="setRadical('钅',this)">钅 โลหะ (金)</div>
+  <div class="compound-dropdown-item" data-key="宀" data-count="0" onclick="setRadical('宀',this)">宀 หลังคา</div>
+  <div class="compound-dropdown-item" data-key="辶" data-count="0" onclick="setRadical('辶',this)">辶 เดิน</div>
+  <div class="compound-dropdown-item" data-key="阝" data-count="0" onclick="setRadical('阝',this)">阝 เนิน/ที่</div>
+  <div class="compound-dropdown-item" data-key="木" data-count="0" onclick="setRadical('木',this)">木 ไม้</div>
+  <div class="compound-dropdown-item" data-key="女" data-count="0" onclick="setRadical('女',this)">女 หญิง</div>
+  <div class="compound-dropdown-item" data-key="犭" data-count="0" onclick="setRadical('犭',this)">犭 สัตว์ (犬)</div>
+  <div class="compound-dropdown-item" data-key="月" data-count="0" onclick="setRadical('月',this)">月 ร่างกาย</div>
+  <div class="compound-dropdown-item" data-key="火" data-count="0" onclick="setRadical('火',this)">火/灬 ไฟ (火)</div>
+  <div class="compound-dropdown-item" data-key="石" data-count="0" onclick="setRadical('石',this)">石 หิน</div>
+</div>
+
+<div class="progress">
+  <span class="ptext" id="memCount">จำได้ 0 คำ</span>
+  <div class="pbar"><div class="pfill" id="pfill" style="width:0%"></div></div>
+  <span class="ptext" id="totalLearned"></span>
+</div>
+</div>
+
+<!-- Character Breakdown Section (replaces grid when active) -->
+<div id="charBreakdownSection" style="display:none;">
+  <div class="cb-filter-bar" style="margin-bottom:16px;background:var(--surface);padding:12px 20px;border-radius:12px;border:1px solid var(--border);">
+    <div style="margin-bottom:12px;">
+      <label style="font-size:13px;color:var(--text-soft);margin-bottom:8px;display:block;">กรองตามตัวอักษรที่แยก:</label>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="cb-char-filter-btn active" data-char="all" onclick="filterByChar('all',this)">ทั้งหมด</button>
+        <button class="cb-char-filter-btn" data-char="生" onclick="filterByChar('生',this)">生</button>
+        <button class="cb-char-filter-btn" data-char="机" onclick="filterByChar('机',this)">机</button>
+        <button class="cb-char-filter-btn" data-char="电" onclick="filterByChar('电',this)">电</button>
+        <button class="cb-char-filter-btn" data-char="学" onclick="filterByChar('学',this)">学</button>
+        <button class="cb-char-filter-btn" data-char="工" onclick="filterByChar('工',this)">工</button>
+        <button class="cb-char-filter-btn" data-char="人" onclick="filterByChar('人',this)">人</button>
+        <button class="cb-char-filter-btn" data-char="心" onclick="filterByChar('心',this)">心</button>
+        <button class="cb-char-filter-btn" data-char="水" onclick="filterByChar('水',this)">水</button>
+        <button class="cb-char-filter-btn" data-char="手" onclick="filterByChar('手',this)">手</button>
+        <button class="cb-char-filter-btn" data-char="气" onclick="filterByChar('气',this)">气</button>
+        <button class="cb-char-filter-btn" data-char="子" onclick="filterByChar('子',this)">子</button>
+        <button class="cb-char-filter-btn" data-char="天" onclick="filterByChar('天',this)">天</button>
+        <button class="cb-char-filter-btn" data-char="年" onclick="filterByChar('年',this)">年</button>
+        <button class="cb-char-filter-btn" data-char="力" onclick="filterByChar('力',this)">力</button>
+        <button class="cb-char-filter-btn" data-char="理" onclick="filterByChar('理',this)">理</button>
+        <button class="cb-char-filter-btn" data-char="情" onclick="filterByChar('情',this)">情</button>
+        <button class="cb-char-filter-btn" data-char="意" onclick="filterByChar('意',this)">意</button>
+        <button class="cb-char-filter-btn" data-char="请" onclick="filterByChar('请',this)">请</button>
+        <button class="cb-char-filter-btn" data-char="明" onclick="filterByChar('明',this)">明</button>
+        <button class="cb-char-filter-btn" data-char="解" onclick="filterByChar('解',this)">解</button>
+        <button class="cb-char-filter-btn" data-char="习" onclick="filterByChar('习',this)">习</button>
+        <button class="cb-char-filter-btn" data-char="面" onclick="filterByChar('面',this)">面</button>
+        <button class="cb-char-filter-btn" data-char="果" onclick="filterByChar('果',this)">果</button>
+        <button class="cb-char-filter-btn" data-char="行" onclick="filterByChar('行',this)">行</button>
+        <button class="cb-char-filter-btn" data-char="洗" onclick="filterByChar('洗',this)">洗</button>
+        <button class="cb-char-filter-btn" data-char="要" onclick="filterByChar('要',this)">要</button>
+        <button class="cb-char-filter-btn" data-char="有" onclick="filterByChar('有',this)">有</button>
+        <button class="cb-char-filter-btn" data-char="节" onclick="filterByChar('节',this)">节</button>
+        <button class="cb-char-filter-btn" data-char="经" onclick="filterByChar('经',this)">经</button>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+      <input class="cb-search-input" id="cbSearchInput" type="text" placeholder="ค้นหาคำ เช่น 电脑, diàn, ไฟฟ้า..." oninput="filterCharBreakdown(this.value)" style="flex:1;padding:12px 16px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit;background:var(--bg);width:100%;max-width:400px;">
+      <span class="cb-count" id="cbCount" style="font-size:13px;color:var(--text-soft);margin-left:12px;white-space:nowrap;"></span>
+    </div>
+  </div>
+  <div class="cb-grid" id="cbGrid"></div>
+</div>
+
+<div class="grid" id="grid"></div>
+<div class="page-ctrl" id="pageCtrl"></div>
+</div>
+</div>
+<div id="gameModal">
+  <div class="game-container">
+    <div class="game-header">
+      <div class="game-title">🎮 เกมจับคู่คำศัพท์</div>
+      <button class="game-close" onclick="closeGame()">✕</button>
+    </div>
+    <div class="game-stats">
+      <span>คู่ที่จับได้: <strong id="matchedCount">0</strong>/<strong id="totalPairs">15</strong></span>
+      <button id="gamePinyinToggle" class="tab" style="padding:4px 12px;font-size:12px;display:none" onclick="toggleGamePinyinUnified()">ซ่อน Pinyin</button>
+      <span>เวลา: <strong id="gameTime">0:00</strong></span>
+    </div>
+    <div class="game-grid" id="gameGrid"></div>
+    <div id="gameOverModal" class="game-over-modal" style="display:none;">
+      <div class="game-over-content">
+        <div class="game-over-title">🎉 ยินดีด้วย!</div>
+        <div class="game-over-message">คุณจับคู่ครบทั้งหมดแล้ว</div>
+        <div class="game-over-time">ใช้เวลา: <span id="gameOverTime">0:00</span></div>
+        <button class="game-over-btn" onclick="showGameResultModal()">ตกลง</button>
+      </div>
+    </div>
+    <div id="gameResultModal" class="game-result-modal" style="display:none;">
+      <div class="game-result-content">
+        <div class="game-result-title">🏆 สรุปผลการเล่น</div>
+        <div class="game-result-message">จับคู่สำเร็จทั้งหมด 15 คู่</div>
+        <div class="game-result-time">เวลาที่ใช้: <span id="gameResultTime">0:00</span></div>
+        <div class="game-result-stars">⭐ ⭐ ⭐</div>
+        <button class="game-result-btn" onclick="closeGame()">ปิดเกม</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="articleModal">
+  <div class="article-container">
+    <div class="article-header">
+      <div class="article-title">📖 ตัวอย่างบทความ (120 บทความ)</div>
+      <button class="article-close" onclick="closeArticle()">✕</button>
+    </div>
+    <div id="articleContent"></div>
+  </div>
+</div>
+<div id="strokeModal">
+  <div class="stroke-container">
+    <div class="stroke-header">
+      <div class="stroke-title" id="strokeTitle">✍️ ลำดับการลากเส้น</div>
+      <button class="stroke-close" onclick="closeStrokeModal()">✕</button>
+    </div>
+    <div class="stroke-info" id="strokeInfo">คลิกที่ปุ่มด้านล่างเพื่อดูการเขียนอีกครั้ง</div>
+    <div class="stroke-legend">
+      <span class="legend-item"><span class="legend-dot" style="background:#1F2937"></span> สีดำ = ขีดทั่วไป</span>
+      <span class="legend-item"><span class="legend-dot" style="background:#3B82F6"></span> สีน้ำเงิน = ส่วนประกอบหลัก (radical)</span>
+    </div>
+    <div class="stroke-characters" id="strokeCharacters"></div>
+    <div class="stroke-controls">
+      <button class="stroke-btn" onclick="replayAllStrokes()">▶️ เขียนทีละตัวใหม่</button>
+      <button class="stroke-btn stroke-btn-secondary" onclick="closeStrokeModal()">ปิด</button>
+    </div>
+  </div>
+</div>
+<div id="writingModal">
+  <div class="exercise-container">
+    <div class="exercise-header">
+      <div class="exercise-title" id="writingTitle">✍️ แบบฝึกหัดเขียน</div>
+      <button class="exercise-close" onclick="closeWritingModal()">✕</button>
+    </div>
+    <div class="exercise-stats">
+      <span>คำที่: <strong id="writingProgress">1</strong>/<span id="writingTotal">10</span></span>
+    </div>
+    <div class="exercise-content">
+      <div id="writingWord" class="writing-word" style="display:none;"></div>
+      <div id="writingPinyin" class="writing-pinyin"></div>
+      <div id="writingMeaning" class="writing-meaning"></div>
+      <div class="writing-canvas-area">
+        <div id="writingCanvas" class="writing-canvas"></div>
+        <div class="writing-canvas-controls">
+          <button class="exercise-btn exercise-btn-secondary" onclick="toggleWritingOutline()" id="outlineToggleBtn">👁️‍🗨️ แสดงตัวอักษร</button>
+          <button class="exercise-btn exercise-btn-secondary" onclick="clearWritingCanvas()">ล้าง</button>
+          <button class="exercise-btn" onclick="checkWriting()">ไปต่อ</button>
+        </div>
+      </div>
+      <div id="writingFeedback" class="exercise-feedback"></div>
+    </div>
+    <div class="exercise-controls">
+      <button class="exercise-btn exercise-btn-secondary" onclick="closeWritingModal()">ปิด</button>
+    </div>
+  </div>
+</div>
+<div id="readingModal">
+  <div class="exercise-container">
+    <div class="exercise-header">
+      <div class="exercise-title" id="readingTitle">📖 อ่าน แล้วตอบคำถาม</div>
+      <button class="exercise-close" onclick="closeReadingModal()">✕</button>
+    </div>
+    <div class="exercise-stats">
+      <span>ข้อที่: <strong id="readingProgress">1</strong>/<span id="readingTotal">15</span></span>
+      <span>คะแนน: <strong id="readingScore">0</strong></span>
+    </div>
+    <div class="exercise-content">
+      <div id="readingQuestion" class="reading-question"></div>
+      <div id="readingOptions" class="reading-options"></div>
+      <div id="readingFeedback" class="exercise-feedback"></div>
+    </div>
+    <div class="exercise-controls">
+      <button class="exercise-btn exercise-btn-secondary" onclick="closeReadingModal()">ปิด</button>
+    </div>
+  </div>
+</div>
+<div id="orderingModal">
+  <div class="exercise-container">
+    <div class="exercise-header">
+      <div class="exercise-title" id="orderingTitle">🔤 เรียงประโยค</div>
+      <button class="exercise-close" onclick="closeOrderingModal()">✕</button>
+    </div>
+    <div class="exercise-stats">
+      <span>ประโยคที่: <strong id="orderingProgress">1</strong>/<span id="orderingTotal">15</span></span>
+      <span>คะแนน: <strong id="orderingScore">0</strong></span>
+    </div>
+    <div class="exercise-content">
+      <div class="ordering-toggle-area">
+        <button class="writing-toggle-btn" onclick="toggleOrderingPinyin()">🔤 แสดง Pinyin</button>
+      </div>
+      <div id="orderingHint" class="ordering-hint"></div>
+      <div id="orderingPinyin" class="ordering-pinyin" style="display:none;"></div>
+      <div id="orderingWords" class="ordering-words"></div>
+      <div id="orderingResult" class="ordering-result"></div>
+      <div id="orderingFeedback" class="exercise-feedback"></div>
+    </div>
+    <div class="exercise-controls">
+      <button class="exercise-btn" onclick="checkOrdering()">ตรวจสอบ</button>
+      <button class="exercise-btn exercise-btn-secondary" onclick="resetOrdering()">เริ่มใหม่</button>
+      <button class="exercise-btn exercise-btn-secondary" onclick="closeOrderingModal()">ปิด</button>
+    </div>
+  </div>
+</div>
+<div id="listeningModal">
+  <div class="listening-container">
+    <div class="exercise-header">
+      <div class="exercise-title">🎧 โหมดฟังและพิมพ์</div>
+      <button class="exercise-close" onclick="closeListening()">✕</button>
+    </div>
+    <div class="exercise-stats">
+      <span>คำที่ <strong id="listeningCurrent">1</strong>/<strong id="listeningTotal">10</strong></span>
+      <span>คะแนน: <strong id="listeningScore">0</strong></span>
+    </div>
+    <div class="exercise-content">
+      <div class="listening-word" id="listeningWord">?</div>
+      <button class="exercise-btn" onclick="playListeningAudio()" style="margin-bottom:20px">🔊 เล่นเสียง</button>
+      <input type="text" class="listening-input" id="listeningInput" placeholder="พิมพ์ตัวอักษรจีนที่คุณได้ยิน...">
+      <div class="listening-result" id="listeningResult"></div>
+    </div>
+    <div class="exercise-controls">
+      <button class="exercise-btn" onclick="checkListeningAnswer()">ตรวจคำตอบ</button>
+      <button class="exercise-btn-secondary" onclick="skipListening()">ข้าม</button>
+      <button class="exercise-btn-secondary" onclick="closeListening()">ปิด</button>
+    </div>
+  </div>
+</div>
+<div id="randomQuizModal">
+  <div class="quiz-container">
+    <div class="exercise-header">
+      <div class="exercise-title">📝 แบบทดสอบแบบสุ่ม</div>
+      <button class="exercise-close" onclick="closeRandomQuiz()">✕</button>
+    </div>
+    <div class="quiz-mode-selector" id="quizModeSelector">
+      <button class="quiz-mode-btn active" onclick="setQuizMode('easy')">ง่าย (4 ตัวเลือก)</button>
+      <button class="quiz-mode-btn" onclick="setQuizMode('medium')">ปานกลาง (เติมคำ)</button>
+      <button class="quiz-mode-btn" onclick="setQuizMode('hard')">ยาก (เขียนเอง)</button>
+    </div>
+    <div class="exercise-stats">
+      <span>คำถามที่ <strong id="quizCurrent">1</strong>/<strong id="quizTotal">10</strong></span>
+      <span>คะแนน: <strong id="quizScore">0</strong></span>
+    </div>
+    <div class="exercise-content" id="quizContent">
+      <div class="quiz-question" id="quizQuestion"></div>
+      <div id="quizAnswerArea"></div>
+      <div class="listening-result" id="quizResult"></div>
+    </div>
+    <div class="exercise-controls">
+      <button class="exercise-btn" id="quizCheckBtn" onclick="checkAndNextQuiz()">ตรวจคำตอบ</button>
+      <button class="exercise-btn-secondary" onclick="closeRandomQuiz()">ปิด</button>
+    </div>
+    <div class="quiz-progress-chart" id="quizChart" style="display:none">
+      <h3 style="margin-bottom:12px;color:var(--text)">📊 ความก้าวหน้า</h3>
+      <div class="quiz-chart-label">คะแนนรวม: <strong id="chartScore">0</strong>/<strong id="chartTotal">0</strong></div>
+      <div class="quiz-chart-bar" id="chartBar" style="width:0%"></div>
+    </div>
+  </div>
+</div>
+<div id="similarModal">
+  <div class="similar-container">
+    <div class="similar-header">
+      <div class="similar-title">🔍 เปรียบเทียบคำคล้ายกัน</div>
+      <button class="similar-close" onclick="closeSimilarModal()">✕</button>
+    </div>
+    <div id="similarContent"></div>
+  </div>
+</div>
+<script src="vocab.js"></script>
+<script src="quiz_questions.js"></script>
+<script src="sample_articles.js"></script>
+<script src="char_breakdown_data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
