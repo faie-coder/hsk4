@@ -857,6 +857,14 @@ function applyCharFilters(searchValue){
 
 function buildCbRow(d){
   let eq = '';
+  eq += '<div class="cb-result-card">'
+    + '<div class="cb-result-header">' + d.p + '</div>'
+    + '<div class="cb-result-body">'
+      + '<div class="cb-result-han">' + d.w + '</div>'
+      + '<div class="cb-result-meaning">' + d.m + '</div>'
+    + '</div>'
+  + '</div>';
+  eq += '<span class="cb-op">=</span>';
   d.c.forEach(function(ch, i){
     if(i > 0) eq += '<span class="cb-op">+</span>';
     eq += '<div class="cb-char-card">'
@@ -865,14 +873,6 @@ function buildCbRow(d){
       + '<div class="cb-char-meaning">' + ch.cm + '</div>'
       + '</div>';
   });
-  eq += '<span class="cb-op">=</span>';
-  eq += '<div class="cb-result-card">'
-    + '<div class="cb-result-header">' + d.p + '</div>'
-    + '<div class="cb-result-body">'
-      + '<div class="cb-result-han">' + d.w + '</div>'
-      + '<div class="cb-result-meaning">' + d.m + '</div>'
-    + '</div>'
-  + '</div>';
   return '<div class="cb-row"><div class="cb-equation">' + eq + '</div>'
     + (d.fm && d.fm !== d.m ? '<div class="cb-fm">💡 ' + d.fm + '</div>' : '')
     + '</div>';

@@ -802,13 +802,14 @@ html,body{
 .cb-fm{font-size:12px;color:var(--accent);margin-top:8px;padding-top:8px;border-top:1px dashed var(--border)}
 
 @media(max-width:600px){
+  .cb-grid{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
   .cb-char-han{font-size:26px}
   .cb-result-han{font-size:24px}
   .cb-char-card{padding:8px 12px}
-  .cb-result-card{width:100%;flex:1;padding:6px 10px 8px}
+  .cb-result-card{width:100%;flex:1;padding:6px 10px 8px;flex-basis:100%}
   .cb-result-header{font-size:10px;padding:3px 8px}
   .cb-result-body{padding:6px 10px 8px}
-  .cb-equation{gap:4px;flex-direction:column;align-items:stretch;row-gap:8px}
-  .cb-op{font-size:16px;align-self:center}
+  .cb-equation{gap:4px;flex-wrap:wrap;flex-direction:row}
+  .cb-op{font-size:16px}
   .cb-body{padding:12px}
 }
