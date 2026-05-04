@@ -1159,6 +1159,11 @@ function closeWritingModal(){
   if(writingWriter){
     writingWriter=null;
   }
+  // Show hamburger menu again
+  const menuBtn=document.querySelector('.mobile-menu-btn');
+  if(menuBtn){
+    menuBtn.classList.remove('hide');
+  }
 }
 
 // แบบฝึกหัดอ่านตอบคำถาม
