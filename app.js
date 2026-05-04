@@ -272,12 +272,14 @@ function showAllFlashcards(){
   syncRadioSelection('topic','all');
   updateFilterBtnText();
   
-  // Close sidebar on mobile
+  // Close sidebar on mobile (but keep hamburger menu visible)
   const sidebar=document.getElementById('sidebar');
   const overlay=document.getElementById('sidebarOverlay');
+  const menuBtn=document.querySelector('.mobile-menu-btn');
   if(window.innerWidth<=1024){
     sidebar.classList.remove('show');
     overlay.classList.remove('show');
+    menuBtn.classList.remove('hide');
   }
   
   // Highlight the menu item
@@ -309,12 +311,14 @@ function showRangeFlashcards(start,end){
   syncRadioSelection('topic','all');
   updateFilterBtnText();
   
-  // Close sidebar on mobile
+  // Close sidebar on mobile (but keep hamburger menu visible)
   const sidebar=document.getElementById('sidebar');
   const overlay=document.getElementById('sidebarOverlay');
+  const menuBtn=document.querySelector('.mobile-menu-btn');
   if(window.innerWidth<=1024){
     sidebar.classList.remove('show');
     overlay.classList.remove('show');
+    menuBtn.classList.remove('hide');
   }
   
   // Close submenu if exists
@@ -535,6 +539,16 @@ function startPractice(el){
   const shuffled=[...vocab].sort(()=>Math.random()-0.5);
   practiceWords=shuffled.slice(0,50);
   
+  // Close sidebar on mobile (but keep hamburger menu visible)
+  const sidebar=document.getElementById('sidebar');
+  const overlay=document.getElementById('sidebarOverlay');
+  const menuBtn=document.querySelector('.mobile-menu-btn');
+  if(window.innerWidth<=1024){
+    sidebar.classList.remove('show');
+    overlay.classList.remove('show');
+    menuBtn.classList.remove('hide');
+  }
+  
   // อัพเดท UI
   document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
   document.querySelectorAll(".menu-item").forEach(m=>m.classList.remove("active"));
@@ -573,6 +587,16 @@ function showDifficultWords(el){
   
   // Hide character breakdown if showing
   if(typeof hideCharBreakdown === 'function') hideCharBreakdown();
+  
+  // Close sidebar on mobile (but keep hamburger menu visible)
+  const sidebar=document.getElementById('sidebar');
+  const overlay=document.getElementById('sidebarOverlay');
+  const menuBtn=document.querySelector('.mobile-menu-btn');
+  if(window.innerWidth<=1024){
+    sidebar.classList.remove('show');
+    overlay.classList.remove('show');
+    menuBtn.classList.remove('hide');
+  }
   
   document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
   document.querySelectorAll(".menu-item").forEach(m=>m.classList.remove("active"));
@@ -758,8 +782,15 @@ function showCharBreakdown(){
   }
   document.getElementById('cbCount').textContent = charBreakdownData.length + ' คำ';
   
-  // Close sidebar on mobile
-  if(window.toggleSidebar && window.innerWidth < 768) toggleSidebar();
+  // Close sidebar on mobile (but keep hamburger menu visible)
+  const sidebar=document.getElementById('sidebar');
+  const overlay=document.getElementById('sidebarOverlay');
+  const menuBtn=document.querySelector('.mobile-menu-btn');
+  if(window.innerWidth<=1024){
+    sidebar.classList.remove('show');
+    overlay.classList.remove('show');
+    menuBtn.classList.remove('hide');
+  }
   
   // Scroll to top
   document.querySelector('.wrap').scrollIntoView({behavior:'smooth'});
@@ -922,6 +953,16 @@ function startWritingPractice(start,end){
   document.getElementById('writingTotal').textContent=writingWords.length;
   document.getElementById('writingModal').classList.add('show');
   showWritingQuestion();
+  
+  // Close sidebar on mobile (but keep hamburger menu visible)
+  const sidebar=document.getElementById('sidebar');
+  const overlay=document.getElementById('sidebarOverlay');
+  const menuBtn=document.querySelector('.mobile-menu-btn');
+  if(window.innerWidth<=1024){
+    sidebar.classList.remove('show');
+    overlay.classList.remove('show');
+    menuBtn.classList.remove('hide');
+  }
 }
 
 function startWritingPracticeByTopic(topic){
@@ -940,12 +981,14 @@ function startWritingPracticeByTopic(topic){
   document.getElementById('writingModal').classList.add('show');
   showWritingQuestion();
   
-  // Close sidebar on mobile
+  // Close sidebar on mobile (but keep hamburger menu visible)
   const sidebar=document.getElementById('sidebar');
   const overlay=document.getElementById('sidebarOverlay');
+  const menuBtn=document.querySelector('.mobile-menu-btn');
   if(window.innerWidth<=1024){
     sidebar.classList.remove('show');
     overlay.classList.remove('show');
+    menuBtn.classList.remove('hide');
   }
   
   // Close submenu if exists
@@ -1137,6 +1180,16 @@ function startReadingQuiz(start,end){
   document.getElementById('readingTotal').textContent=readingQuestions.length;
   document.getElementById('readingModal').classList.add('show');
   showReadingQuestion();
+  
+  // Close sidebar on mobile (but keep hamburger menu visible)
+  const sidebar=document.getElementById('sidebar');
+  const overlay=document.getElementById('sidebarOverlay');
+  const menuBtn=document.querySelector('.mobile-menu-btn');
+  if(window.innerWidth<=1024){
+    sidebar.classList.remove('show');
+    overlay.classList.remove('show');
+    menuBtn.classList.remove('hide');
+  }
 }
 
 function showReadingQuestion(){
@@ -1248,6 +1301,16 @@ function startSentenceOrdering(start,end){
   document.getElementById('orderingTotal').textContent=orderingQuestions.length;
   document.getElementById('orderingModal').classList.add('show');
   showOrderingQuestion();
+  
+  // Close sidebar on mobile (but keep hamburger menu visible)
+  const sidebar=document.getElementById('sidebar');
+  const overlay=document.getElementById('sidebarOverlay');
+  const menuBtn=document.querySelector('.mobile-menu-btn');
+  if(window.innerWidth<=1024){
+    sidebar.classList.remove('show');
+    overlay.classList.remove('show');
+    menuBtn.classList.remove('hide');
+  }
 }
 
 function showOrderingQuestion(){
@@ -1391,7 +1454,16 @@ function showSimilarWords(){
   
   content.innerHTML=html;
   document.getElementById('similarModal').classList.add('show');
-  if(window.innerWidth<=1024)toggleSidebar();
+  
+  // Close sidebar on mobile (but keep hamburger menu visible)
+  const sidebar=document.getElementById('sidebar');
+  const overlay=document.getElementById('sidebarOverlay');
+  const menuBtn=document.querySelector('.mobile-menu-btn');
+  if(window.innerWidth<=1024){
+    sidebar.classList.remove('show');
+    overlay.classList.remove('show');
+    menuBtn.classList.remove('hide');
+  }
 }
 
 function showSimilarDetail(index){
@@ -1490,7 +1562,16 @@ function showSampleArticles(range='all'){
   html+='</div>';
   content.innerHTML=html;
   document.getElementById('articleModal').classList.add('show');
-  if(window.innerWidth<=1024)toggleSidebar();
+  
+  // Close sidebar on mobile (but keep hamburger menu visible)
+  const sidebar=document.getElementById('sidebar');
+  const overlay=document.getElementById('sidebarOverlay');
+  const menuBtn=document.querySelector('.mobile-menu-btn');
+  if(window.innerWidth<=1024){
+    sidebar.classList.remove('show');
+    overlay.classList.remove('show');
+    menuBtn.classList.remove('hide');
+  }
 }
 
 function showArticleContent(id){
@@ -1664,6 +1745,16 @@ function startListeningDictation(){
   document.getElementById('listeningModal').classList.add('show');
   document.getElementById('listeningTotal').textContent=listeningWords.length;
   loadListeningWord();
+  
+  // Close sidebar on mobile (but keep hamburger menu visible)
+  const sidebar=document.getElementById('sidebar');
+  const overlay=document.getElementById('sidebarOverlay');
+  const menuBtn=document.querySelector('.mobile-menu-btn');
+  if(window.innerWidth<=1024){
+    sidebar.classList.remove('show');
+    overlay.classList.remove('show');
+    menuBtn.classList.remove('hide');
+  }
 }
 
 function loadListeningWord(){
@@ -1747,6 +1838,16 @@ function startRandomQuiz(){
   document.getElementById('quizTotal').textContent=quizWords.length;
   document.getElementById('quizChart').style.display='none';
   loadQuizQuestion();
+  
+  // Close sidebar on mobile (but keep hamburger menu visible)
+  const sidebar=document.getElementById('sidebar');
+  const overlay=document.getElementById('sidebarOverlay');
+  const menuBtn=document.querySelector('.mobile-menu-btn');
+  if(window.innerWidth<=1024){
+    sidebar.classList.remove('show');
+    overlay.classList.remove('show');
+    menuBtn.classList.remove('hide');
+  }
 }
 
 function setQuizMode(mode){
@@ -1946,6 +2047,17 @@ function startMatchingGame(mode='chinese-thai',pairCount=15){
   document.getElementById('matchedCount').textContent='0';
   document.getElementById('totalPairs').textContent=gamePairCount;
   document.getElementById('gameTime').textContent='0:00';
+  
+  // Close sidebar on mobile (but keep hamburger menu visible)
+  const sidebar=document.getElementById('sidebar');
+  const overlay=document.getElementById('sidebarOverlay');
+  const menuBtn=document.querySelector('.mobile-menu-btn');
+  if(window.innerWidth<=1024){
+    sidebar.classList.remove('show');
+    overlay.classList.remove('show');
+    menuBtn.classList.remove('hide');
+  }
+  
   document.getElementById('gameModal').classList.add('show');
   
   // แสดง/ซ่อนปุ่ม toggle Pinyin ตามโหมด
