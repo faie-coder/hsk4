@@ -895,8 +895,10 @@ function toggleSubmenu(id){
   const submenu=document.getElementById(id);
   submenu.classList.toggle('show');
   const toggle=submenu.previousElementSibling;
-  const span=toggle.querySelector('span:last-child');
-  span.textContent=span.textContent.includes('▾')?span.textContent.replace('▾','▴'):span.textContent.replace('▴','▾');
+  const chevron=toggle.querySelector('.chevron');
+  if(chevron){
+    chevron.style.transform=submenu.classList.contains('show')?'rotate(90deg)':'rotate(0deg)';
+  }
 }
 
 // แบบฝึกหัดเขียน
@@ -908,6 +910,7 @@ let writingWriter=null;
 let writingChars=[];
 let writingCharIndex=0;
 let showWritingOutline=false;
+let hasWrittenStrokes=false;
 
 function startWritingPractice(start,end){
   const words=vocab.filter(v=>v.n>=start&&v.n<=end);
@@ -973,6 +976,7 @@ function showWritingQuestion(){
 function initWritingWriter(character){
   const canvas=document.getElementById('writingCanvas');
   canvas.innerHTML='';
+  hasWrittenStrokes=false;
   
   writingWriter=HanziWriter.create('writingCanvas', character, {
     width: 300,
@@ -1001,9 +1005,15 @@ function initWritingWriter(character){
     writingWriter.quiz({
       onMistake: function(strokeData) {
         // Mistake handling
+        hasWrittenStrokes=true;
       },
       onCorrectStroke: function(strokeData) {
         // Correct stroke handling
+        hasWrittenStrokes=true;
+      },
+      onComplete: function() {
+        // Auto-advance to next character when writing is complete
+        checkWriting();
       }
     });
   }catch(e){
@@ -1038,6 +1048,13 @@ function checkWriting(){
   const word=writingWords[writingIndex];
   const currentChar=writingChars[writingCharIndex];
   const feedback=document.getElementById('writingFeedback');
+  
+  // Check if user actually wrote something
+  if(!hasWrittenStrokes){
+    feedback.textContent=`❌ กรุณาเขียนตัวอักษร "${currentChar}" ก่อนกดไปต่อ`;
+    feedback.className='exercise-feedback wrong';
+    return;
+  }
   
   // Mark current character as correct
   writingAnswers.push({
@@ -1773,7 +1790,7 @@ function loadQuizQuestion(){
       `<div class="reading-option" onclick="selectQuizOption(this,'${opt}')">${opt}</div>`
     ).join('');
   }else if(quizMode==='medium'){
-    questionDiv.innerHTML=`${word.h} (${word.p}) = ${word.m}<br>เติมคำที่หายไป:`;
+    questionDiv.innerHTML=`(${word.p}) = ${word.m}<br>เติมคำที่หายไป:`;
     const blanked=word.h.split('').map((c,i)=>i===0?'___':c).join('');
     answerArea.innerHTML=`<p style="font-size:24px;margin-bottom:12px">${blanked}</p><input type="text" class="quiz-input" id="quizInput" placeholder="เติมตัวอักษรที่หายไป...">`;
   }else{
